@@ -12,6 +12,7 @@ A funcionalidade de adicionar uma nova lampada
 
 ## Gerenciador
 Deve ser responsavel por gerenciar quais tomadas deverao ser ligadas
+
 ´´´ python
  changePlug(id,state)
  
