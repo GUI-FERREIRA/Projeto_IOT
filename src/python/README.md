@@ -13,7 +13,7 @@ A funcionalidade de adicionar uma nova lampada
 ## Gerenciador
 Deve ser responsavel por gerenciar quais tomadas deverao ser ligadas
 
-´´´ python
+´´´python
  changePlug(id,state)
  
  getPlugs()--> dict 
@@ -25,7 +25,7 @@ Deve ser responsavel por gerenciar quais tomadas deverao ser ligadas
 ## Comunicação
 deve fornecer os metodos
 
-´´´ python
+´´´python
  send(msg:str)--> Bool
  receiveListener(listener:func(str))
 ´´´
