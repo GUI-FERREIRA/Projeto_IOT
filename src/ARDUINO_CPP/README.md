@@ -1,6 +1,6 @@
 ## Deve ser capas de comunicar via serial com o computador
 
-####Os comando implementados serao
+#### Os comando implementados serao
 
 - mudar estado da  tomada 
 - adicionar tomada
