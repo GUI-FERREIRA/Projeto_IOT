@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title> Casa Smart</title>
+{% endblock %}
+
+{% block body %}
+<div class = "content">
+    <h1 style = "text-align: center">Gerenciador de Dispositivos</h1>
+    {% if disps|length < 1 %}
+    <h4 style = "text-align: center">Não há dispositivos. Acicione um!</h4>
+    {% else %}
+    <h4 style = "text-align: center">Lista de Dispositivos</h4>
+    <table>
+        <tr>
+            <th>Dispositivo</th>
+            <th>Opcões</th>
+        </tr>
+        {% for disp in disps %}
+            <tr>
+                <td>{{ disp.content }}</td>
+                <td>
+                    <a href="/delete/{{disp.id}}">Excluir</a>
+                    <br>
+                    <a href="/renomear/{{disp.id}}">Renomear</a>
+                    <br>
+                    <a href="/controle/{{disp.id}}">Funções</a>
+               
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+    <div class = "form">
+        <form action="/" method = "POST">
+            <input type="text" name ="content" id ="content">
+            <input type="submit" value="Adicionar Dispositivo">
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title> Casa Smart</title>
+{% endblock %}
+
+{% block body %}
+    <h1 style = "text-align: left">Ligar/Desligar</h1>
+    <div class ="form" style = "text-align: left">
+        <form action="/controle/{{aprl.id}}" method = "post">
+            <input type="submit" name="on_button" value='Ligar' style = "color:antiquewhite ; background-color:green">
+            <input type="submit" name="off_button" value="Desligar"  style = "color:antiquewhite ; background-color:red">
+        </form>
+    </div>
+{% endblock %}
