@@ -13,6 +13,8 @@ from threading import Thread
 from serial import Serial
 from serial.tools.list_ports import comports
 
+PLUGS = 1
+STATUS = 2
 
 def defaultHandle(msg):
     pass
