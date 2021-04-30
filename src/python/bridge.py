@@ -16,6 +16,7 @@ from serial.tools.list_ports import comports
 PLUGS = 1
 STATUS = 2
 
+
 def defaultHandle(msg):
     pass
 
@@ -26,9 +27,7 @@ class Bridge:
         self.run = True
         self._handleReceive = defaultHandle
         self._handleListener = None
-        self.handleWait = 100 # tempo a cada verificação
-    def send(self, string):
-        pass
+        self.handleWait = 100  # tempo a cada verificação
 
     def setReceiveListener(self, listener):
         self._handleReceive = listener
@@ -51,6 +50,7 @@ class Bridge:
             return False, 'Porta indisponivel'
         self.serial = Serial(port, speed)
         self.serial.open()
+
         def f():
             while self.run and self.serial.isOpen():
                 serial = Serial()
@@ -58,7 +58,8 @@ class Bridge:
                 n = int.from_bytes(n, byteorder='big', signed=True)
                 msg = serial.read(size=n)
                 self._handleReceive(msg)
-        self._handleListener = Thread(target = f)
+
+        self._handleListener = Thread(target=f)
         return True, ''
 
     def __del__(self):
@@ -66,6 +67,13 @@ class Bridge:
         if not (self.serial is None) and self.serial.isOpen():
             self.serial.close()
 
+    def change_plug(self, gpio, new_status):
+        pass
 
-b = Bridge()
-print(b.getPortsAvalaible())
+    def request(self, req, handleCallBack):
+        pass
+
+
+if __name__ == '__main__':
+    b = Bridge()
+    print(b.getPortsAvalaible())
