@@ -6,7 +6,6 @@ Comunicao  do tipo Serial
 
 dependências:
 pip install pyserial
-
 """
 from threading import Thread
 

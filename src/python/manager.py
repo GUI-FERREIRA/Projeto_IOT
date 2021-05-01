@@ -47,6 +47,15 @@ class Manager:
             return True
         return False
 
+    def registerPlug(self, name, gpio):
+    	if gpio in self.tomadas:
+    		self.tomadas[gpio].name = name
+    		return True
+
+    def delete(self, gpio):
+    	pass
+
+
 
 if __name__ == '__main__':
     manager = Manager()
