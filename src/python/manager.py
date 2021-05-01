@@ -80,9 +80,12 @@ class Manager:
     	f.close()
 
     def load(self):
-    	with open('.registro.p', 'rb') as f:
-    		self.tomadas = pickle.load(f)
-    	f.close()
+    	try:
+	    	with open('.registro.p', 'rb') as f:
+	    		self.tomadas = pickle.load(f)
+	    	f.close()
+	    except:
+	    	pass
     	
 if __name__ == '__main__':
     manager = Manager()
