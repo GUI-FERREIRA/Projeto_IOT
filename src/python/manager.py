@@ -1,4 +1,5 @@
 from bridge import *
+import pickle
 
 
 class Tomada:
@@ -19,7 +20,10 @@ class Manager:
         self.ponte = Bridge()
         self.ponte.setReceiveListener(self.__check_request__)
         self._on_request = on_request_success
+        self.load()
 
+    def hasArduinoConnected(self):
+        return self.arduino_conected
 
     def __check_request__(self, request, obj):
         if request == PLUGS:
@@ -43,7 +47,7 @@ class Manager:
         self.ponte.request(PLUGS)
 
     def setRequestListener(self, handleListener):
-    	self.on_request_success = handleListener
+        self.on_request_success = handleListener
 
     def change_plug(self, gpio, new_status):
         if gpio in self.tomadas:
@@ -52,27 +56,39 @@ class Manager:
             return True
         return False
 
-    def get_tomada(self): # Retorna lista das gpio utilizadas
-    	plugs = [value for key, value in self.tomadas.items()]
-    	return plugs
+    def get_tomada(self):  # Retorna lista das gpio utilizadas
+        plugs = [value for key, value in self.tomadas.items()]
+        return plugs
 
     def registerPlug(self, name, gpio):
-    	if gpio in self.tomadas:
-    		self.tomadas[gpio].name = name
-    		return True
-    	return False
+        if gpio in self.tomadas:
+            self.tomadas[gpio].name = name
+            self.save()
+            return True
+        return False
 
     def delete_plug(self, gpio):
-    	if gpio in self.tomadas:
-    		del self.tomadas[gpio] 
-    		return True
-    	return False
+        if gpio in self.tomadas:
+            del self.tomadas[gpio]
+            self.save()
+            return True
+        return False
 
     def save(self):
-    	pass
+        with open('.registro.p', 'wb') as f:
+            pickle.dump(self.tomadas, f)
+        f.close()
 
-    		
+    def load(self):
+        try:
+            with open('.registro.p', 'rb') as f:
+                self.tomadas = pickle.load(f)
+            f.close()
+        except Exception:
+            pass
+
 
 if __name__ == '__main__':
     manager = Manager()
+    manager.load()
     print(manager.get_serial())

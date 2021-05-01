@@ -16,9 +16,6 @@ PLUGS = 1
 STATUS = 2
 SET = 3
 
-
-
-
 class Bridge:
     def __init__(self):
         self.serial = None
@@ -57,7 +54,7 @@ class Bridge:
                 data = list(self.serial.read(size=n))
                 command = data.pop(0)
                 agp = data.pop(0)
-                if agp == 1 :
+                if agp == 1:
                     self.__handleReceive(command, data)
                     continue
                 obj = {data[i]: data[i + 1:i + agp] for i in range(0, len(data), agp)}
