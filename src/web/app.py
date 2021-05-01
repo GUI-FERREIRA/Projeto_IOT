@@ -1,66 +1,43 @@
 from flask import Flask, render_template, url_for, request, redirect
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-import serial
-
-
-#Função que lê o Status do Serial envaido pelo Arduino
-def serial_read():
-    print('Reading from Arduino over Serial. . .')
-    return led_status
-
-#Função que lê envia um comando de status pro Arduino, LED ON/OFF "0" or "1"
-def serial_write(data=None):
-    print("Diga qual a porta a ser usada:")
-    portaserial=input()
-    # Abrindo a porta Serial Arduino
-    s = serial.Serial(portaserial,9600)
-    print('Escrevendo {} para o Arduino pela Porta Serial '.format(data))
-    s.write(data.encode())
-
+import sys
+sys.path.append('../python/')
+from manager import *
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI']= 'sqlite:///site.db'
-db = SQLAlchemy(app)
-
-class Aparelhos(db.Model):
-    id = db.Column(db.Integer,primary_key = True)
-    content = db.Column(db.String(200),nullable = False)
-    date_created = db.Column(db.DateTime, default = datetime.utcnow)
-    
-    def __repr__(self):
-        return '<Aparelho %r>' %self.id
-
-db.create_all()
+manager = Manager()
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
-    if request.method =='POST':
-        nome_disp = request.form['content']
-        novo_disp = Aparelhos(content=nome_disp)
+    if not manager.hasArduinoConnected():
+        portas = manager.get_serial()
+        #portas = ['COM1','COM2']
+        return render_template('index.html',portas=portas)
+    # if request.method =='POST':
+    #     nome_disp = request.form['content']
+    #     novo_disp = Tomada(nome=nome_disp)
+    # else:
+    #     tomadas = manager.get_AvaliablePlug()
+    #     return render_template('index.html',portas=portas, tomadas= tomadas)
+    # if request.method =='POST':
+    #     nome_disp = request.form['content']
+    #     novo_disp = Tomada(nome=nome_disp)
+    #     try:
+    #         manager.registerPlug()
+    #         db.session.commit()
+    #         return redirect('/')
+    #     except:
+    #         return 'Houve um erro ao adicionar um novo Dispositivo'
 
-        try:
-            db.session.add(novo_disp)
-            db.session.commit()
-            return redirect('/')
-        except:
-            return 'Houve um erro ao adicionar um novo Dispositivo'
 
+@app.route('/arduino_connect/',methods=['GET','POST']) # Conectando a uma porta
+def conectar():
+    porta = request.args.get('porta')
+    conexao,erro = manager.arduino_conect(porta)
+    if conexao == False:
+        return erro
     else:
-        disps = Aparelhos.query.order_by(Aparelhos.date_created).all()
-        return render_template('index.html', disps = disps)
-
-@app.route('/deletar/<int:id>')
-def delete(id):
-    disp_to_delete = Aparelhos.query.get_or_404(id)
-
-    try:
-        db.session.delete(disp_to_delete)
-        db.session.commit()
-        return redirect('/')
-    except:
-        return 'Houve um problema ao excluir o dispositivo'
-
+        redirect('/')
+     
 @app.route('/renomear/<int:id>',methods=['GET','POST'])
 def update(id):
     aprl = Aparelhos.query.get_or_404(id)
