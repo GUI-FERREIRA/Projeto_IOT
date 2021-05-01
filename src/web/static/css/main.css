@@ -3,6 +3,18 @@ body, html {
     font-family: sans-serif;
 }
 
+.flex-container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+  }
+
+.flex-container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+  }
+  
 .content {
     margin: 0 auto;
     width: 400px;

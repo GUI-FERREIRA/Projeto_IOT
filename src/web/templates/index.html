@@ -5,26 +5,72 @@
 {% endblock %}
 
 {% block body %}
-<header>
-    <div class="navbar navbar-light bg-dark ">
-        <img class = "rounded-circle mr-3" src="https://source.unsplash.com/70x70/?smart_home" alt="Logo do Site">
-        <a class="navbar-brand text-white " style ="text-align:left">Sua Casa Smart</a>
-    </div>
-</header>
-<div class = "content">
+    <header>
+        <nav class="navbar bg-info">
+            <div>
+                <img class = "rounded-circle mr-2 " src="https://source.unsplash.com/70x70/?home" alt="Logo do Site">
+                <a class="navbar-brand text-white" href="">Casa Smart </a>
+            </div>  
+        </nav>
+    </header>
+</div>
+<div >
     <h2 style = "text-align: center">Estas são as portas disponíveis, escolha uma para continuar: </h4>
-        <div  style = "text-align: center">
+        <div  class = "flex-container">
         {% for porta in portas %}
         <form action="/arduino_connect/?porta={{porta}}" method = "POST">
             <input type="submit" class="btn btn-outline-primary" value= {{porta}}  >
         </form>
         {% endfor %}
-        </div>
-        
+        </div>     
     {% if disps|length < 1 %}
     <h4 style = "text-align: center">Não há dispositivos. Adicione um!</h4>
     {% else %}
     <h4 style = "text-align: center">Lista de Dispositivos</h4>
+      <section>
+            <div class="container mb-5">
+                <div class="row">
+                    <div class="col-sm-12 text-dark text-center my-3">
+                        <h1>Natureza: Fauna e Flora</h1>
+                    </div>
+                </div>
+            </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="card border-info";>
+                            <img src="https://source.unsplash.com/300x200/?domestic_animals" class="card-img-top" alt="...">
+                            <div class="card-body">
+                            <h5 class="card-title text-info">Animais Domésticos</h5>
+                            <p class="card-text">Esses adoráveis companheiros,estão acostumados a viver com o ser humano. Esses animais agem assim...</p>
+                            <a href="#" class="btn btn-outline-info">Saiba mais!</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <div class="col-sm-4">
+                        <div class="card border-info";>
+                            <img src="https://source.unsplash.com/300x200/?wildlife" class="card-img-top" alt="...">
+                            <div class="card-body">
+                            <h5 class="card-title text-info">Animais Selvagens</h5>
+                            <p class="card-text">A vida selvagem desempenha um papel importante no equilíbrio do meio ambiente.Proporciona estabilidade a diferentes processos da...</p>
+                            <a href="#" class="btn btn-outline-info">Saiba mais!</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    </section><div class="col-sm-4">
+                        <div class="card border-info";>
+                            <img src="https://source.unsplash.com/300x200/?flora" class="card-img-top" alt="...">
+                            <div class="card-body">
+                            <h5 class="card-title text-info">Flora</h5>
+                            <p class="card-text"> A flora representa os organismos vivos do Reino Vegetal.O termo designa, ainda, a variedade de plantas de um ecossistema ou bioma...</p>
+                            <a href="#" class="btn btn-outline-info">Saiba mais!</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     <table>
         <tr>
             <th>Dispositivo</th>
