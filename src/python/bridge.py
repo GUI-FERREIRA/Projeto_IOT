@@ -14,6 +14,7 @@ from serial.tools.list_ports import comports
 
 PLUGS = 1
 STATUS = 2
+SET = 3
 
 
 def defaultHandle(msg):
@@ -53,7 +54,7 @@ class Bridge:
         def f():
             while self.run and self.serial.isOpen():
                 serial = Serial()
-                n = serial.read(size=4)
+                requerimento = serial.read(size=1)
                 n = int.from_bytes(n, byteorder='big', signed=True)
                 msg = serial.read(size=n)
                 self._handleReceive(msg)
