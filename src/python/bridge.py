@@ -53,12 +53,19 @@ class Bridge:
 
         def f():
             while self.run and self.serial.isOpen():
-                serial = Serial()
-                requerimento = serial.read(size=1)
-                n = int.from_bytes(n, byteorder='big', signed=True)
-                msg = serial.read(size=n)
-                self._handleReceive(msg)
+                # o primeiro byte corresponde ao numero de bytes subsequentes
+                # o segundo byte corresponde ao numero de agrupamento, caso seja diferente de 1 sera na forma de um dicionario
+                # os proximos bytes corresponde ao valor de retorno
 
+                nbytes = self.serial.read(size=1)
+                n = int.from_bytes(nbytes, byteorder='big', signed=True)
+                data = list(self.serial.read(size=n))
+                agp = data.pop(0)
+                if agp == 1:
+                    self._handleReceive(data)
+                    continue
+                obj = {data[i]: data[i + 1:i + agp] for i in range(0, len(data), agp)}
+        
         self._handleListener = Thread(target=f)
         return True, ''
 
@@ -68,10 +75,26 @@ class Bridge:
             self.serial.close()
 
     def change_plug(self, gpio, new_status):
-        pass
+        # o primeiro byte corresponde ao numero de bytes a ser enviados
+        # o segundo byte enviado corresponde ao commando SET
+        # o terceiro byte corresponde a gpio destino
+        # o quarto byte é o novo estado 1 ou 0
+        command = SET.to_bytes(length=1, byteorder='big', signed=False)
+        gpio = gpio.to_bytes(length=1, byteorder='big', signed=False)
+        state = new_status.to_bytes(length=1, byteorder='big', signed=False)
+        msg = command + gpio + state
+        length = len(msg).to_bytes(length=1, byteorder='big', signed=False)
+        self.serial.write(length + msg)
 
-    def request(self, req, handleCallBack):
-        pass
+    def request(self, req):
+        # o primeiro byte corresponde ao numero de bytes a ser enviados
+        # o segundo byte enviado corresponde ao commando req
+        if req == SET:
+            raise AttributeError("O request SET nao esta disponivel")
+        command = req.to_bytes(length=1, byteorder='big', signed=False)
+        msg = command
+        length = len(msg).to_bytes(length=1, byteorder='big', signed=False)
+        self.serial.write(length + msg)
 
 
 if __name__ == '__main__':
