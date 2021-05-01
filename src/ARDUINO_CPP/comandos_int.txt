@@ -1,0 +1,80 @@
+// Note que as portas digitais 0 e 1 no podem ser usadas, uma vez que elas so necessrias para a comunicacao serial (RX TX)
+// {comando , porta desejada , valor}
+int outputPinsArray[] = {2,3,4,5,6,7,8,9,10,11,12,13}; //2 ->13
+int comando=0, porta=0 , valor=0 , state=0 ,contador = 0;
+int inputCommand[3]={ comando , porta , valor };
+boolean streamComplete = false;
+boolean availablePin[11] = {true,true,true,true,true,true,true,true,true,true,true};
+
+void setup(){
+	pinMode(outputPinsArray[0],OUTPUT);
+	pinMode(outputPinsArray[1],OUTPUT);
+	pinMode(outputPinsArray[2],OUTPUT);
+	pinMode(outputPinsArray[3],OUTPUT);
+	pinMode(outputPinsArray[4],OUTPUT);
+	pinMode(outputPinsArray[5],OUTPUT);
+	pinMode(outputPinsArray[6],OUTPUT);
+	pinMode(outputPinsArray[7],OUTPUT);
+	pinMode(outputPinsArray[8],OUTPUT);
+	pinMode(outputPinsArray[9],OUTPUT);
+	pinMode(outputPinsArray[10],OUTPUT);
+	pinMode(outputPinsArray[11],OUTPUT);
+	Serial.begin(9600);
+}
+
+void loop(){
+	if(streamComplete){
+		if(inputCommand[1]==1 ||inputCommand[1]==2){
+			Serial.println("Portas invalidas! Reservadas para RX TX \n");
+		}
+		else if(inputCommand[1] >= 2 && inputCommand[1] <14){
+			obeyCommand();
+		}
+		streamComplete=false;
+	}
+	delay(10);
+}
+
+
+void obeyCommand(){
+	if(inputCommand[0] == 1){ //comando mudar estado
+		if(availablePin[1]==false){
+			state=digitalRead(inputCommand[1]);
+			if(state == LOW ){
+				digitalWrite(inputCommand[1],HIGH);
+			}
+			else if(state == HIGH){
+				digitalWrite(inputCommand[1],LOW);
+			}
+		}
+		else{
+			Serial.println("Aloque a porta primeiramente e tente de novo \n")
+		}
+	}
+	else if(inputCommand[0] == 2){ //adicionar tomada
+		if (availablePin[inputCommand[1]-1]==true){ // se tomada disponivel
+			Serial.println("Tomada adicionada \n");
+			availablePin[inputCommand[1]-1] = false;
+		}
+		else if(availablePin[inputCommand[1]-1]==false){ //se nao estiver
+			Serial.println("Tomada não disponível \n");
+		}
+	}
+	else if(inputCommand[0] == 3){ //tomada ativa?
+		if (availablePin[inputCommand[1]-1]==true){ // se tomada esta disponivel
+			Serial.println("A tomada não esta disponível \n");
+			availablePin[inputCommand[1]-1] = false;
+		}
+		else if(availablePin[inputCommand[1]-1]==false){ //se nao estiver
+			Serial.println("A tomada não esta disponível \n");
+		}
+	}
+}
+
+void serialEvent(){
+	while(Serial.available()){
+		for(contador = 0; contador<3 ; contador=contador+1){
+			inputCommand[contador]=Serial.read();
+		}
+	}
+}

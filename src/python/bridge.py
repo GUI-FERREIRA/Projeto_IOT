@@ -17,34 +17,29 @@ STATUS = 2
 SET = 3
 
 
-def defaultHandle(msg):
-    pass
 
 
 class Bridge:
     def __init__(self):
         self.serial = None
         self.run = True
-        self._handleReceive = defaultHandle
+        self.__handleReceive = None
         self._handleListener = None
         self.handleWait = 100  # tempo a cada verificação
 
     def setReceiveListener(self, listener):
-        self._handleReceive = listener
+        self.__handleReceive = listener
 
     def getPortsAvalaible(self):
         # retorna as portas que nao estao abertas
         portas = comports()
-        pt = []
-        for d in portas:
-            s = Serial(d.device)
-            if not s.isOpen():
-                pt.append(d.device)
-        return pt
+        return [d.device for d in portas]
 
     def connect(self, port, speed=9600):
         if not (self.serial is None):
             return False, 'Porta ja está conectada'
+        if self.__handleReceive is None:
+            return False, 'call back nao atribuido'
         # conecta a uma porta contida nas portas disponiveis
         if not port in self.getPortsAvalaible():
             return False, 'Porta indisponivel'
@@ -60,12 +55,14 @@ class Bridge:
                 nbytes = self.serial.read(size=1)
                 n = int.from_bytes(nbytes, byteorder='big', signed=True)
                 data = list(self.serial.read(size=n))
+                command = data.pop(0)
                 agp = data.pop(0)
-                if agp == 1:
-                    self._handleReceive(data)
+                if agp == 1 :
+                    self.__handleReceive(command, data)
                     continue
                 obj = {data[i]: data[i + 1:i + agp] for i in range(0, len(data), agp)}
-        
+                self.__handleReceive(command, obj)
+
         self._handleListener = Thread(target=f)
         return True, ''
 
