@@ -17,7 +17,9 @@ class Manager:
         self.arduino_conected = False
         self.tomadas = {}
         self.ponte = Bridge()
+        self.ponte.setReceiveListener(self.__check_request__)
         self._on_request = on_request_success
+
 
     def __check_request__(self, request, obj):
         if request == PLUGS:
@@ -37,8 +39,11 @@ class Manager:
         self.arduino_conected, erro = self.ponte.connect(port, serial_speed)
         return self.arduino_conected, erro
 
-    def get_plug(self):  # Retorna as tomadas disponíveis no arduino
-        self.ponte.request(PLUGS, self.__check_request__)
+    def get_AvaliablePlug(self):  # Retorna as tomadas disponíveis no arduino
+        self.ponte.request(PLUGS)
+
+    def setRequestListener(self, handleListener):
+    	self.on_request_success = handleListener
 
     def change_plug(self, gpio, new_status):
         if gpio in self.tomadas:
@@ -47,13 +52,26 @@ class Manager:
             return True
         return False
 
-    def registerPlug(self, name, gpio):
-    	self.tomadas[gpio].name = name
+    def get_tomada(self): # Retorna lista das gpio utilizadas
+    	plugs = [value for key, value in self.tomadas.items()]
+    	return plugs
 
-    def delete(self, gpio):
+    def registerPlug(self, name, gpio):
+    	if gpio in self.tomadas:
+    		self.tomadas[gpio].name = name
+    		return True
+    	return False
+
+    def delete_plug(self, gpio):
+    	if gpio in self.tomadas:
+    		del self.tomadas[gpio] 
+    		return True
+    	return False
+
+    def save(self):
     	pass
 
-
+    		
 
 if __name__ == '__main__':
     manager = Manager()
