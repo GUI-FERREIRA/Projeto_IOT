@@ -7,7 +7,10 @@ Comunicao  do tipo Serial
 dependências:
 pip install pyserial
 """
-from threading import Thread
+import sys
+
+sys.path.append('../python/')
+from ThreadRaise import ThreadWithExc
 
 from serial import Serial
 from serial.tools.list_ports import comports
@@ -15,6 +18,7 @@ from serial.tools.list_ports import comports
 PLUGS = 1
 STATUS = 2
 SET = 3
+
 
 class Bridge:
     def __init__(self):
@@ -34,14 +38,17 @@ class Bridge:
 
     def connect(self, port, speed=9600):
         if not (self.serial is None):
-            return False, 'Porta ja está conectada'
+            self.serial.close()
+            self.run = False
+            self._handleListener.raiseExc(Exception("SHINEEEE!!!"))
+            self._handleListener.join()
+            self.run = True
         if self.__handleReceive is None:
             return False, 'call back nao atribuido'
         # conecta a uma porta contida nas portas disponiveis
         if not port in self.getPortsAvalaible():
             return False, 'Porta indisponivel'
         self.serial = Serial(port, speed)
-        self.serial.open()
 
         def f():
             while self.run and self.serial.isOpen():
@@ -60,7 +67,7 @@ class Bridge:
                 obj = {data[i]: data[i + 1:i + agp] for i in range(0, len(data), agp)}
                 self.__handleReceive(command, obj)
 
-        self._handleListener = Thread(target=f)
+        self._handleListener = ThreadWithExc(target=f, daemon=True)
         return True, ''
 
     def __del__(self):
@@ -94,3 +101,9 @@ class Bridge:
 if __name__ == '__main__':
     b = Bridge()
     print(b.getPortsAvalaible())
+    def onRc(f, obj):
+        print(f, obj)
+    b.setReceiveListener(onRc)
+    print(b.connect('/dev/ttyS99'))
+    b.serial.write(b'ola\n')
+    input("waiting")

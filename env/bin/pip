@@ -1,4 +1,4 @@
-#!/home/anacs/Projeto_IOT/env/bin/python
+#!/home/henrique/Desktop/Projeto_IOT/env/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
