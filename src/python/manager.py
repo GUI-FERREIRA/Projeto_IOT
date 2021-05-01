@@ -1,5 +1,5 @@
 from bridge import *
-
+import pickle
 
 class Tomada:
     def __init__(self, nome, gpio, status):
@@ -19,6 +19,10 @@ class Manager:
         self.ponte = Bridge()
         self.ponte.setReceiveListener(self.__check_request__)
         self._on_request = on_request_success
+        self.load()
+    
+    def hasArduinoConnected(self):
+    	return self.arduino_conected
 
 
     def __check_request__(self, request, obj):
@@ -59,20 +63,25 @@ class Manager:
     def registerPlug(self, name, gpio):
     	if gpio in self.tomadas:
     		self.tomadas[gpio].name = name
+    		self.save()
     		return True
     	return False
 
     def delete_plug(self, gpio):
     	if gpio in self.tomadas:
     		del self.tomadas[gpio] 
+    		self.save()
     		return True
     	return False
 
     def save(self):
-    	pass
+    	with open('.registro.p', 'wb') as f:
+    		pickle.dump(self.tomadas, f)
+    	f.close()
 
-    		
-
+    def load(self):
+    	self.tomadas = pickle.load(".registro.p", 'rb')
+    	
 if __name__ == '__main__':
     manager = Manager()
     print(manager.get_serial())
