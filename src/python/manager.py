@@ -48,9 +48,7 @@ class Manager:
         return False
 
     def registerPlug(self, name, gpio):
-    	if gpio in self.tomadas:
-    		self.tomadas[gpio].name = name
-    		return True
+    	self.tomadas[gpio].name = name
 
     def delete(self, gpio):
     	pass
