@@ -36,7 +36,7 @@ def conectar():
     if conexao == False:
         return erro
     else:
-        redirect('/')
+        return redirect('/conectado')
      
 @app.route('/renomear/<int:id>',methods=['GET','POST'])
 def update(id):

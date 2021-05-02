@@ -2,18 +2,21 @@ body, html {
     margin: 0;
     font-family: sans-serif;
 }
-
+navbar {
+    background-color: #00ffff;
+  }
+  
+.navbar-brand {
+    font-family: "Playfair Display", Georgia, "Times New Roman", serif/*rtl:Amiri, Georgia, "Times New Roman", serif*/;
+    font-size: 2.25rem;
+  }
+  
 .flex-container {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-around;
   }
 
-.flex-container {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-around;
-  }
   
 .content {
     margin: 0 auto;
@@ -21,12 +24,12 @@ body, html {
 }
 
 table, td, th {
-    border: 1px solid #aaa;
+    border: 1px solid rgb(252, 248, 248);
 }
 
 table {
     border-collapse: collapse;
-    width: 100%;
+    width: 90%;
 }
 
 th {
