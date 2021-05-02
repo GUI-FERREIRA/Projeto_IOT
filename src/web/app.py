@@ -7,26 +7,23 @@ app = Flask(__name__)
 manager = Manager()
 
 @app.route('/', methods = ['POST', 'GET'])
-def index():
+def confimar_serial():
     if not manager.hasArduinoConnected():
         portas = manager.get_serial()
         #portas = ['COM1','COM2']
         return render_template('index.html',portas=portas)
-    # if request.method =='POST':
-    #     nome_disp = request.form['content']
-    #     novo_disp = Tomada(nome=nome_disp)
-    # else:
-    #     tomadas = manager.get_AvaliablePlug()
-    #     return render_template('index.html',portas=portas, tomadas= tomadas)
-    # if request.method =='POST':
-    #     nome_disp = request.form['content']
-    #     novo_disp = Tomada(nome=nome_disp)
-    #     try:
-    #         manager.registerPlug()
-    #         db.session.commit()
-    #         return redirect('/')
-    #     except:
-    #         return 'Houve um erro ao adicionar um novo Dispositivo'
+def registro_tomadas():
+    if request.method =='POST':
+        nome_disp = request.form['content']
+        novo_disp = Tomada(nome_disp)
+        try:
+            registerPlug(novo_disp)
+            return redirect('/')
+        except:
+            return 'Houve um problema ao adicionar sua tarefa'
+    else:
+        tomadas = manager.get_tomada()
+        return render_template('index.html',portas=portas, tomadas= tomadas)
 
 
 @app.route('/arduino_connect/',methods=['GET','POST']) # Conectando a uma porta
@@ -36,7 +33,7 @@ def conectar():
     if conexao == False:
         return erro
     else:
-        return redirect('/conectado')
+        return redirect('/')
      
 @app.route('/renomear/<int:id>',methods=['GET','POST'])
 def update(id):
