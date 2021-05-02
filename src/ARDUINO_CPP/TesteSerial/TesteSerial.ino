@@ -18,6 +18,7 @@ void setup() {
 void loop() {
     char numBytes = 0 ;
     int i=0, j=2;
+    
     readbytes(1,&numBytes);
     readbytes(numBytes,buff);
     switch(buff[0]){
@@ -31,15 +32,13 @@ void loop() {
           writeBytes(i,buff);
           break;
         case STATUS:
-    {
-      int j=2;
+          j=2;
           for( i = 0; outputPinsArray[i] > 0 ; i++){
              buff[j]=outputPinsArray[i];
              j++;
              buff[j]=digitalRead(outputPinsArray[i]);
              j++;
             }
-    }
           Serial.write((char) j); // cast
           buff[1]=2; // vetor de duas dimensoes
           writeBytes(j,buff);
