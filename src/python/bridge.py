@@ -99,7 +99,7 @@ class Bridge:
         msg = command
         length = len(msg).to_bytes(length=1, byteorder='big', signed=False)
         self.serial.write(length + msg)
-
+        
 b = None
 if True or __name__ == '__main__':
     b = Bridge()
@@ -108,4 +108,4 @@ if True or __name__ == '__main__':
         print(f, obj)
     b.setReceiveListener(onRc)
     print(b.connect('COM4'))
-   
+    

@@ -4,22 +4,35 @@ sys.path.append('../python/')
 from manager import *
 
 app = Flask(__name__)
+
 manager = Manager()
+pinos = None
+
+def receiver_listener(request,obj):
+    global pinos
+    if request == PLUGS:
+        pinos = obj
+        print(pinos)
+manager.setRequestListener(receiver_listener)
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
+    global pinos
     conexao_arduino = manager.hasArduinoConnected()
-    pins = [2,3,5,6,7,12]
     portas = manager.get_serial()
     # portas = ['COM1','COM2']
-    # pins = manager.get_AvaliablePlug() retorna NoneType
+    
     if not conexao_arduino:
         return render_template('index.html',portas=portas, conexao_arduino = conexao_arduino)
-    elif request.method =='POST':
+    pinos = None
+    manager.get_AvaliablePlug() 
+    while pinos is None:
+        pass
+    if  request.method =='POST':
         nome_disp = request.form['content']
         pin = request.form['selecionar']
         print(pin)
-        estado=0
+        
         novo_disp = Tomada(nome_disp,pin,estado)
         usadas = manager.get_tomada()
         print(usadas)
@@ -31,7 +44,9 @@ def index():
     else:
         tomadas = manager.tomadas.items()
         print(tomadas)
-        return render_template('index.html', portas=portas,pins = pins,tomadas= tomadas, conexao_arduino = conexao_arduino)
+        return render_template('index.html', portas=portas,pinos = pinos,tomadas= tomadas, conexao_arduino = conexao_arduino)
+
+
 
 @app.route('/arduino_connect/',methods=['GET','POST']) # Conectando a uma porta
 def conectar():
@@ -78,4 +93,4 @@ def controle(pin):
         return render_template('painel_de_controle.html', aprl =aprl)
 
 if __name__ == "__main__":
-    app.run(debug=True, host = '0.0.0.0')
+    app.run(debug=True, host = '0.0.0.0', port = '2020')
