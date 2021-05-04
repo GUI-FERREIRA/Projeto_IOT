@@ -65,6 +65,11 @@ class Manager:
         self.save()
         return True
 
+    def inverte(self, gpio, status):
+        if gpio in self.tomadas:
+            change_plug(gpio, not(status))
+        return False
+
     def delete_plug(self, gpio):
         if gpio in self.tomadas:
             del self.tomadas[gpio]
