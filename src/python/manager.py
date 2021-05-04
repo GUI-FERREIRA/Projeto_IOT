@@ -61,11 +61,9 @@ class Manager:
         return plugs
 
     def registerPlug(self, name, gpio):
-        if gpio in self.tomadas:
-            self.tomadas[gpio].name = name
-            self.save()
-            return True
-        return False
+        self.tomadas[gpio].name = name
+        self.save()
+        return True
 
     def delete_plug(self, gpio):
         if gpio in self.tomadas:
