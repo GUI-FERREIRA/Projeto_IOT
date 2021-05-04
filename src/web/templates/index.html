@@ -17,47 +17,56 @@
         </div>
     </header>
     <div>
-        <h2 style = "text-align: center">Estas são as portas disponíveis, escolha uma para continuar: </h4>
+        {% if conexao_arduino == False %}
+        <h2 style = "text-align: center">Estas são as portas disponíveis, escolha uma para continuar: </h2>
             <div  class = "flex-container">
                 {% for porta in portas %}
                 <form action="/arduino_connect/?porta={{porta}}" method = "POST">
                     <input type="submit" class="btn btn-outline-info" value= {{porta}}>
                 </form>
                 {% endfor %}
-            </div>     
-        {% if portas|length < 1 %}
-        <h4 style = "text-align: center">Não há dispositivos. Adicione um!</h4>
-        {% else %}
-        <h4 style = "text-align: center">Lista de Dispositivos</h4>
-        <table class="table">
-            <thead class="table-info">
-            <tr>
-                <th scope="col">Dispositivo</th>
-                <th scope="col">Status</th>
-                <th scope="col">Opções</th>
-            </tr>
-            </thead>
-            {% for tomada in portas %}
-            <tbody>
-            <tr>
-                <td>{{tomada}}</td>
-                <td>ON/OFF</td>
-                <td><a class="btn btn-success" href="#" role="button">Ligar</a>
-                    <a class="btn btn-warning" href="#" role="button">Desligar</a>
-                    <a class="btn btn-danger" href="#" role="button">Excluir</a>
-                    <a class="btn btn-info" href="#" role="button">Renomear</a>
-                </td>
-            </tr>
-            </tbody>
-            {% endfor %}
-        </table>
-        {% endif %}
-        <div class = "form">
-            <form action="/" method = "POST" class=>
-                <input type="text" name ="content" id ="content">
-                <input class= "btn-info" type="submit" value="Adicionar Dispositivo">
+            </div>
+        {%else%}
+            {% if tomadas|length < 1 %}
+            <h4 style = "text-align: center">Não há dispositivos. Adicione um!</h4>
+            {% else %}
+            <h4 style = "text-align: center">Lista de Dispositivos</h4>
+            <table class="table">
+                <thead class="table-info">
+                <tr>
+                    <th scope="col">Dispositivo</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Opções</th>
+                </tr>
+                </thead>
+                {% for tomada in tomadas %}
+                <tbody>
+                <tr>
+                    <td>{{tomada}}</td>
+                    <td>ON/OFF</td>
+                    <td>
+                        <a class="btn btn-primary" href="/controle/{{pin}}" role="button">Opções</a>
+                        <a class="btn btn-warning" href="/deletar/{{pin}}" role="button">Excluir</a>
+                        <a class="btn btn-info" href="/renomear/{{pin}}" role="button">Renomear</a>
+                    </td>
+                </tr>
+                </tbody>
+                {% endfor %}
+            </table>
+            {% endif %}
+            <form action="/" method = "POST">
+                <div class="input-group">
+                    <select class="selecionar_porta" name="selecionar"  id="selecionar"  aria-label="multiple">
+                        <option selected>Escolha o número da Tomada...</option>
+                        {% for pin in pins%}
+                        <option value="{{pin}}">{{pin}}</option>
+                        {%endfor%}
+                    </select>
+                        <input type="text" class="form-control" aria-label="Text input with segmented dropdown button" name ="content" id ="content" placeholder="Digite o nome do Dispositivo...">                 
+                        <input class= "btn-info" type="submit" value="Adicionar Dispositivo">
+                </div>
             </form>
-        </div>
+        {% endif %}
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
 {% endblock %}

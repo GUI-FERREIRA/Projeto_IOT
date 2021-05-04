@@ -7,24 +7,31 @@ app = Flask(__name__)
 manager = Manager()
 
 @app.route('/', methods = ['POST', 'GET'])
-def confimar_serial():
-    if not manager.hasArduinoConnected():
-        portas = manager.get_serial()
-        #portas = ['COM1','COM2']
-        return render_template('index.html',portas=portas)
-def registro_tomadas():
-    if request.method =='POST':
+def index():
+    conexao_arduino = manager.hasArduinoConnected()
+    pins = [2,3,5,6,7,12]
+    portas = manager.get_serial()
+    # portas = ['COM1','COM2']
+    # pins = manager.get_AvaliablePlug() retorna NoneType
+    if not conexao_arduino:
+        return render_template('index.html',portas=portas, conexao_arduino = conexao_arduino)
+    elif request.method =='POST':
         nome_disp = request.form['content']
-        novo_disp = Tomada(nome_disp)
+        pin = request.form['selecionar']
+        print(pin)
+        estado=0
+        novo_disp = Tomada(nome_disp,pin,estado)
+        usadas = manager.get_tomada()
+        print(usadas)
         try:
-            registerPlug(novo_disp)
+            manager.registerPlug(nome_disp,pin)
             return redirect('/')
         except:
-            return 'Houve um problema ao adicionar sua tarefa'
+            return 'Houve um problema ao adicionar seu dispositivo'
     else:
-        tomadas = manager.get_tomada()
-        return render_template('index.html',portas=portas, tomadas= tomadas)
-
+        tomadas = manager.tomadas.items()
+        print(tomadas)
+        return render_template('index.html', portas=portas,pins = pins,tomadas= tomadas, conexao_arduino = conexao_arduino)
 
 @app.route('/arduino_connect/',methods=['GET','POST']) # Conectando a uma porta
 def conectar():
@@ -33,35 +40,40 @@ def conectar():
     if conexao == False:
         return erro
     else:
-        return redirect('/')
-     
-@app.route('/renomear/<int:id>',methods=['GET','POST'])
-def update(id):
-    aprl = Aparelhos.query.get_or_404(id)
+        return 'CONECTANDO...', {"Refresh": "2; url=/"} 
 
-    if request.method == 'POST':
-        aprl.content = request.form['content']
 
+@app.route('/deletar/<int:pin>')
+def delete(pin):
+    manager.delete_plug(pin)
+    return redirect('/')
+
+@app.route('/renomear/<int:pin>',methods=['GET','POST'])
+def update(pin):
+    aparel = manager.tomada(pin) #minha lista de tomadas
+    if  request.method =='POST':
+        n_nome = request.form['content']
+        #novo_disp = Tomada(nome_disp,pin,estado)
+        usadas = manager.get_tomada()
+        print(usadas)
         try:
-            db.session.commit()
+            manager.registerPlug(n_nome,pin)
             return redirect('/')
         except:
-            return 'Houve um problema ao renomerar o dispositivo'
+            return 'Houve um problema ao renomear seu dispositivo'
     else:
-        return render_template('update.html', aprl = aprl)
+        return render_template('index.html',aparel=aparel )
 
-@app.route('/controle/<int:id>',methods=['GET','POST'])
-def controle(id):
-    aprl = Aparelhos.query.get_or_404(id)
+@app.route('/controle/<int:pin>',methods=['GET','POST'])
+def controle(pin):
+    aprl = manager.tomada.items(pin)
     if request.method == 'POST':
         #Pressionando o botão para ligar
         if request.form['on_button'] == 'Ligar':
-            serial_write(data='1')
+            change_plug(pin,1)
         #Pressionando o botão para desligar
         elif request.form['off_button'] == 'Desligar':
-            serial_write(data='0')
-            print("Desligado")
-        
+            change_plug(pin,0)   
     elif request.method == 'GET':
         return render_template('painel_de_controle.html', aprl =aprl)
 

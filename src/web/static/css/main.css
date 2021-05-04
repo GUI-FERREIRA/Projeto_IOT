@@ -1,10 +1,12 @@
 body, html {
     margin: 0;
     background-color: whitesmoke;
+    font-family: Times, serif;
 }
 
 .header{
     background:linear-gradient(to right,#15b3a5, #97e0ce);
+    margin-bottom:10px;
 
 }
 
@@ -53,7 +55,13 @@ td {
     border: 1px solid rgb(245, 244, 244);
 }
 
+.selecionar_porta{
+    width: 15%;
+    border: 1px solid rgb(245, 244, 244);
+    background: rgb(185, 238, 233);
+}
+
 #content {
     width: 70%;
-    margin:20px;
+
 }
