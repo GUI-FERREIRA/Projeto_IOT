@@ -101,7 +101,7 @@ class Bridge:
         self.serial.write(length + msg)
         
 b = None
-if True or __name__ == '__main__':
+if __name__ == '__main__':
     b = Bridge()
     print(b.getPortsAvalaible())
     def onRc(f, obj):
