@@ -9,7 +9,7 @@
         <div class="header">
             <nav class="navbar">
                 <div >
-                    <img class = "rounded-circle mr-2 " src="https://source.unsplash.com/70x70/?home" alt="Logo do Site">
+                    <img class = "rounded-circle mr-2 " src="https://source.unsplash.com/70x70/?house" alt="Logo do Site">
                     <a class="navbar-brand text-white" href="">Casa Smart</a>
                 </div>  
             
@@ -36,25 +36,29 @@
                 <tr>
                     <th scope="col">Dispositivo</th>
                     <th scope="col">Opções</th>
-                    <th scope="col">Status</th>
                 </tr>
                 </thead>
                 {% for tomada in tomadas %}
                 <tbody>
                 <tr>
-                    <td>{{tomada.nome}}</td>
-                    
                     <td>
+                        <form action="/" method = "POST">
+                            <select class="form-select form-select-lg mb-3 btn-outline-info" name= "opcoes"  aria-label="multiple">
+                                <option selected>{{tomada.nome}}</option> 
+                                    <option value="Renomear" onclick= "window.location.href='/renomear/?p_conect={{tomada.gpio}}';">Renomear</option>
+                                    <option value="Excluir" onclick= "window.location.href='/deletar/?p_conect={{tomada.gpio}}';">Excluir</option>
+                            </select>
+                        <form action="/" method = "POST">
+                    </td>
+                        <td>
                             <div class="btn-group" role="group" >
                                 <form action="/controle/{{tomada.gpio}}" method = "POST">
-                                {% if tomada.status == 0 %}
-                                <button  onclick= "window.location.href='/controle/{{tomada.gpio}}';" class="btn btn-success" type="button" name="on_button" value='Ligar' style = "color:antiquewhite ; ">Ligar</button>
-                                {% else %}
+                                {% if tomada.status == 1 %}
                                 <button  onclick="window.location.href='/controle/{{tomada.gpio}}';" class="btn btn-danger" type="button" name="off_button" value="Desligar"  style = "color:antiquewhite ;">Desligar</button>
+                                {% else %}
+                                <button  onclick= "window.location.href='/controle/{{tomada.gpio}}';" class="btn btn-success" type="button" name="on_button" value='Ligar' style = "color:antiquewhite ; ">Ligar</button>
                                 {% endif %}
                                 </form>
-                                <a class="btn btn-warning" href="/deletar/?p_conect={{tomada.gpio}}" role="button">Excluir</a>
-                            <a class="btn btn-info" href="/renomear/?p_conect={{tomada.gpio}}" role="button">Renomear</a>
                         </div>
                     </td>
                 </tr>
@@ -64,8 +68,8 @@
             {% endif %}
             <form action="/" method = "POST">
                 <div class="input-group">
-                    <select class="selecionar_porta" name="selecionar"  id="selecionar"  aria-label="multiple">
-                        <option selected>Escolha o número da Tomada...</option>
+                    <select class="selecionar_porta " name="selecionar"  id="selecionar"  aria-label="multiple">
+                        <option selected>Escolha a Tomada...</option>
                         {% for pin in pins%}
                         <option value="{{pin}}">{{pin}}</option>
                         {%endfor%}

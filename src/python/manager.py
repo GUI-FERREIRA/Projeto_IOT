@@ -54,7 +54,7 @@ class Manager:
     def getAvailablePlug(self):
         a = list(self.pins.keys())
         b = list(self.tomadas.keys())
-        return [c for c in a if not (a in b)]
+        return [c for c in a if not (c in b)]
 
     def setRequestListener(self, handleListener):
         self.on_request_success = handleListener
@@ -82,7 +82,7 @@ class Manager:
     def registerPlug(self, name, gpio):
         gpio = int(gpio)
         if gpio in self.tomadas:
-            self.tomadas[gpio].name = name
+            self.tomadas[gpio].nome = name
         else:
             self.tomadas[gpio] = Tomada(name,gpio,self.pins[gpio])
         self.save()
@@ -120,3 +120,4 @@ if __name__ == '__main__':
     manager = Manager()
     manager.load()
     print(manager.get_serial())
+    

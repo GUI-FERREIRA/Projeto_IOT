@@ -70,7 +70,7 @@ def update():
         n_disp = request.form['content']
         manager.registerPlug(n_disp, p_conect)
         return redirect('/')
-    return render_template('update.html',porta=p_conect,aparel=manager.get_tomada())
+    return render_template('update.html',porta=p_conect,tomadas=manager.get_tomada())
 
 
 @app.route('/controle/<int:pin>', methods=['GET', 'POST'])
@@ -81,10 +81,11 @@ def controle(pin):
         #Pressionando o botão para ligar
         if request.form['on_button'] == 'Ligar':
             manager.inverte(pin)
-    
+            return redirect('/')
         #Pressionando o botão para desligar
         elif request.form['off_button'] == 'Desligar':
             manager.inverte(pin)
+            return redirect('/')
     return render_template('index.html', tomadas = manager.get_tomada(),led = led )
    
 

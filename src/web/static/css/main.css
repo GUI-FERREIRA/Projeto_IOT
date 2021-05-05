@@ -47,7 +47,7 @@ th {
 
 td {
     text-align: center;
-    
+    padding: 5px;
 }
 
 .form {
@@ -59,6 +59,10 @@ td {
     width: 15%;
     border: 1px solid rgb(245, 244, 244);
     background: rgb(185, 238, 233);
+}
+
+.opc_dispositivo{
+    width: 75px;
 }
 
 #content {
