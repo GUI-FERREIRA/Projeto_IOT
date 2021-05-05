@@ -29,20 +29,18 @@ def index():
     global pinos
     conexao_arduino = manager.hasArduinoConnected()
     portas = manager.get_serial()
-    # portas = ['COM1','COM2']
-
+    # portas = ['COM1','COM2'] #usadas para teste
     if not conexao_arduino:
         return render_template('index.html', portas=portas, conexao_arduino=conexao_arduino)
 
     if request.method == 'POST':
         nome_disp = request.form['content']
         pin = request.form['selecionar']
-
         manager.registerPlug(nome_disp, pin)
         return redirect('/')
 
     pinos = manager.getAvailablePlug()
-    return render_template('index.html', portas=portas, pins=pinos, tomadas=manager.get_tomada(),conexao_arduino=conexao_arduino)
+    return render_template('index.html', portas=portas, pins=pinos, tomadas= manager.get_tomada(),conexao_arduino=conexao_arduino)
 
 
 @app.route('/arduino_connect/', methods=['GET', 'POST'])  # Conectando a uma porta
@@ -55,42 +53,42 @@ def conectar():
         return 'CONECTANDO...', {"Refresh": "2; url=/"}
 
 
-@app.route('/deletar/<int:pin>')
-def delete(pin):
-    manager.delete_plug(pin)
-    return redirect('/')
-
-
-@app.route('/renomear/<int:pin>', methods=['GET', 'POST'])
-def update(pin):
-    aparel = manager.tomada(pin)  # minha lista de tomadas
-    if request.method == 'POST':
-        n_nome = request.form['content']
-        # novo_disp = Tomada(nome_disp,pin,estado)
-        usadas = manager.get_tomada()
-        print(usadas)
-        try:
-            manager.registerPlug(n_nome, pin)
-            return redirect('/')
-        except:
-            return 'Houve um problema ao renomear seu dispositivo'
+@app.route('/deletar/', methods=['GET', 'POST'])
+def delete():
+    p_conect = request.args.get('p_conect')
+    deletado = manager.delete_plug(p_conect)
+    if deletado == True:
+        return redirect('/')
     else:
-        return render_template('index.html', aparel=aparel)
+        return 'Houve um erro ao deletar sua tarefa, tente novamente', {"Refresh": "2; url=/"}
+
+
+@app.route('/renomear/', methods=['GET', 'POST'])
+def update():
+    p_conect = request.args.get('p_conect')
+    if request.method == 'POST':
+        n_disp = request.form['content']
+        manager.registerPlug(n_disp, p_conect)
+        return redirect('/')
+    return render_template('update.html',porta=p_conect,aparel=manager.get_tomada())
 
 
 @app.route('/controle/<int:pin>', methods=['GET', 'POST'])
 def controle(pin):
-    aprl = manager.tomada.items(pin)
+    led = manager.inverte(pin)
+    status_led = 'OFF'
     if request.method == 'POST':
-        # Pressionando o botão para ligar
+        #Pressionando o botão para ligar
         if request.form['on_button'] == 'Ligar':
-            manager.change_plug(pin, 1)
-        # Pressionando o botão para desligar
+            led = manager.inverte(pin)
+            status_led = 'ON'
+        #Pressionando o botão para desligar
         elif request.form['off_button'] == 'Desligar':
-            manager.change_plug(pin, 0)
-    elif request.method == 'GET':
-        return render_template('painel_de_controle.html', aprl=aprl)
+            led = manager.inverte(pin)
+            status_led = 'OFF'
+    return render_template('index.html', tomadas = manager.get_tomada(),led = led,ledonoff = status_led )
+   
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port='2020')
+    app.run(debug=True,host ='0.0.0.0', port='2020')

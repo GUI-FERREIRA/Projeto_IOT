@@ -75,7 +75,7 @@ class Manager:
     def registerPlug(self, name, gpio):
         gpio = int(gpio)
         if gpio in self.tomadas:
-            self.tomadas[gpio].name = name
+            self.tomadas[gpio].nome = name
         else:
             self.tomadas[gpio] = Tomada(name,gpio,self.pins[gpio])
         self.save()

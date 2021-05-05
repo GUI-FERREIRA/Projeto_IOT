@@ -5,13 +5,26 @@
 {% endblock %}
 
 {% block body %}
+<header >
+    <div class="header">
+        <nav class="navbar">
+            <div >
+                <img class = "rounded-circle mr-2 " src="https://source.unsplash.com/70x70/?home" alt="Logo do Site">
+                <a class="navbar-brand text-white" href="">Casa Smart</a>
+            </div>  
+        
+        </nav>
+    </div>
+</header>
+<div>
+
 <div class = "content">
     <h1 style = "text-align: center">Renomear Dispositivo</h1>
 
     <div class ="form">
-        <form action="/renomear/{{aprl.id}}" method = "POST">
-            <input type="text" name ="content" id ="content" value = "{{aprl.content}}">
-            <input type="submit" value="Renomear">
+        <form action="/renomear/?p_conect={{porta}}" method = "POST">
+            <input type="text" name ="content" id ="content" placeholder="{{aparel.nome}}" >
+            <input class= "btn btn-primary" type="submit" value="Renomear">
         </form>
     </div>
 </div>
