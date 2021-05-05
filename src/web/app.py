@@ -75,20 +75,18 @@ def update():
 
 @app.route('/controle/<int:pin>', methods=['GET', 'POST'])
 def controle(pin):
-    led = manager.inverte(pin)
-    status_led = 'OFF'
+    manager.inverte(pin)
+    led = manager.get_tomada_by_id(pin).status
     if request.method == 'POST':
         #Pressionando o botão para ligar
         if request.form['on_button'] == 'Ligar':
-            led = manager.inverte(pin)
-            status_led = 'ON'
+            manager.inverte(pin)
+    
         #Pressionando o botão para desligar
         elif request.form['off_button'] == 'Desligar':
-            led = manager.inverte(pin)
-            status_led = 'OFF'
-    return render_template('index.html', tomadas = manager.get_tomada(),led = led,ledonoff = status_led )
+            manager.inverte(pin)
+    return render_template('index.html', tomadas = manager.get_tomada(),led = led )
    
-
 
 if __name__ == "__main__":
     app.run(debug=True,host ='0.0.0.0', port='2020')

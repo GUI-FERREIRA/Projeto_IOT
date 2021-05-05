@@ -68,6 +68,13 @@ class Manager:
             return True
         return False
 
+    def get_tomada_by_id(self,gpio):
+        gpio = int(gpio)
+        if gpio in self.tomadas:
+            return self.tomadas[gpio]
+        raise Exception('Posição inválida') 
+
+
     def get_tomada(self):  # Retorna lista das gpio utilizadas
         plugs = [value for key, value in self.tomadas.items()]
         return plugs
@@ -75,7 +82,7 @@ class Manager:
     def registerPlug(self, name, gpio):
         gpio = int(gpio)
         if gpio in self.tomadas:
-            self.tomadas[gpio].nome = name
+            self.tomadas[gpio].name = name
         else:
             self.tomadas[gpio] = Tomada(name,gpio,self.pins[gpio])
         self.save()

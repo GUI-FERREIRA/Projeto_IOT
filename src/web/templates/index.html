@@ -46,8 +46,8 @@
                     
                     <td>
                             <div class="btn-group" role="group" >
-                                {% if led == False %}
                                 <form action="/controle/{{tomada.gpio}}" method = "POST">
+                                {% if tomada.status == 0 %}
                                 <button  onclick= "window.location.href='/controle/{{tomada.gpio}}';" class="btn btn-success" type="button" name="on_button" value='Ligar' style = "color:antiquewhite ; ">Ligar</button>
                                 {% else %}
                                 <button  onclick="window.location.href='/controle/{{tomada.gpio}}';" class="btn btn-danger" type="button" name="off_button" value="Desligar"  style = "color:antiquewhite ;">Desligar</button>
@@ -56,13 +56,6 @@
                                 <a class="btn btn-warning" href="/deletar/?p_conect={{tomada.gpio}}" role="button">Excluir</a>
                             <a class="btn btn-info" href="/renomear/?p_conect={{tomada.gpio}}" role="button">Renomear</a>
                         </div>
-                    </td>
-                    <td>
-                        {% if ledonoff == "OFF" %}
-                        <img src="{{url_for('static', filename='ONbulb.jpg')}}" align ="middle" />
-                        {% else %}
-                        <img src="{{url_for('static', filename='OFFbulb.jpg')}}" align ="middle" />
-                        {% endif %}
                     </td>
                 </tr>
                 </tbody>
