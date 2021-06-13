@@ -1,5 +1,6 @@
 # Projeto_IOT
-Ana Julia
-Getúlio
-Guilherme 
-Henrique
+
+- Ana Julia
+- Getúlio
+- Guilherme 
+- Henrique
