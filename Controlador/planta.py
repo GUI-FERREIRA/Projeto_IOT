@@ -7,6 +7,7 @@ import tkinter as tk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
+from Atomic import *
 
 class Levitador:
     def __init__(self, tempoAmostragemCompensador=0.01,host='localhost',port=8909):
@@ -35,7 +36,7 @@ class Levitador:
         self.tensao = 0
         
         self.canvas = None
-        self.y = 0
+        self.y = Atomic(0)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((host, port))
         self.details = {}
@@ -62,31 +63,31 @@ class Levitador:
         while True:
             self.uk[0]= self.tensao
             self.xk = self.rk4(t, self.xk, self.uk)
-            self.y = self.xk[0]
-            if self.y<0:
+            y = self.xk[0,0]
+            if y<0:
                 self.xk[0] = 0
-                self.xk[1] = 0
-            if self.y>1:
+                self.xk[1] = self.xk[1]*-0.95
+            if y>1:
                 self.xk[0] = 1
                 self.xk[1] = 0
-            self.setBall(self.xk[0,0])
+            self.setBall(y)
             t += self.h
-            #print(self.xk,self.uk,self.y)
+            self.y.value = y
             sleep(self.h)
 
 
     def amostrador(self):
         while True:
-            v = self.y
-            self.socket.send(np.array(self.y, dtype=np.float64).tobytes())
             sleep(self.Ts)
+            v = self.y.value
+            self.socket.send(np.array(v, dtype=np.float64).tobytes())
+            
 
 
     def listenTCP(self):
         while True:
             bytes = self.socket.recv(8)
             v = np.frombuffer(bytes, dtype=np.float64)
-           # print('Planta:listenTcp',v)
             self.tensao = v[0]
     
 

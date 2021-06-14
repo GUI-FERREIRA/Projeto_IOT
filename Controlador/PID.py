@@ -19,7 +19,7 @@ class PID:
 
         self.data = []
         # tensao minima e maxima de saída
-        self.mn, self.mx = 0.0, 100.0
+        self.mn, self.mx = 0.0, 150.0
         # variaveis para eq de difernecas
 
     def eqdif(self, y):
@@ -52,7 +52,7 @@ class PID:
             #print(type(y),type(tensao))
             self.data.append((y_, tensao))
             #print('pid',y,tensao,self.setPoint)
-            sleep(self.Ts)
+            
 
     def ui(self):
         root = tk.Tk()
@@ -69,9 +69,8 @@ class PID:
         frame_saidaCompensador.place(x=1, y=obj['scdim'][1] / 2 + 20, width=obj['scdim'][0],
                                      height=obj['scdim'][1] / 2 - 20)
         frameBotoes.place(x=1, y=1, width=obj['scdim'][0], height=40)
-        pltY = self.putGraphics(frame_posicaoBola, obj['scdim'][0], obj['scdim'][1] / 2 - 20, 'Posição da Bola', 2,
-                           legend=['Posição da Bola', 'Posição alvo'])
-        pltVa = self.putGraphics(frame_saidaCompensador, obj['scdim'][0], obj['scdim'][1] / 2 - 20, 'Tensão do motor')
+        pltY = self.putGraphics(frame_posicaoBola, obj['scdim'][0], obj['scdim'][1] / 2 - 20, 'Posição da Bola', 2,legend=['Posição da Bola', 'Posição alvo'],ylim=[-0.5,1.5])
+        pltVa = self.putGraphics(frame_saidaCompensador, obj['scdim'][0], obj['scdim'][1] / 2 - 20, 'Tensão do motor',ylim=[-1,150])
         obj['len'] = 10000
 
         def loop():
@@ -101,7 +100,7 @@ class PID:
         Thread(target=loop, daemon=True).start()
         root.mainloop()
 
-    def putGraphics(self, frame, x=100, y=100, title='', data=1, legend=['Tensão(V)']):
+    def putGraphics(self, frame, x=100, y=100, title='', data=1, legend=['Tensão(V)'],ylim = [-15,15]):
         figure = plt.Figure(figsize=(6, 6), dpi=100)
         ax = figure.add_subplot(111)
         cv = FigureCanvasTkAgg(figure, frame)
@@ -111,7 +110,7 @@ class PID:
         else:
             gp, gp2 = ax.plot([0], [0], [0], [0])
         ax.set_title(title)
-        ax.set_ylim(-0.5, 1.5)
+        ax.set_ylim(*ylim)
         ax.grid()
         ax.legend(legend)
         if data == 1:
