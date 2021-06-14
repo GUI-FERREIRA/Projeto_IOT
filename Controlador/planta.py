@@ -31,7 +31,7 @@ class Levitador:
         self.B = Gs.B
         self.h = 1e-4
         self.uk = np.array([0])
-        self.xk = np.array([[0], [0], [0]])
+        self.xk = np.array([[1], [0], [0]])
 
         self.tensao = 0
         

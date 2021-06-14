@@ -19,23 +19,25 @@ class PID:
 
         self.data = []
         # tensao minima e maxima de saída
-        self.mn, self.mx = 0.0, 150.0
+        self.mn, self.mx = 0.0, 300.0
         # variaveis para eq de difernecas
-
+        self.ek_1 = 0
+        
     def eqdif(self, y):
         '''
         Recebe a posicao atual da bolinha
         :return: a tensão de entrada para o levitador
         '''
-        ek_1 = 0
+        ek_1 = self.ek_1
         ek = self.setPoint - y
         u = self.kp * ek + self.ki * (ek + ek_1) + self.kd * (ek - ek_1)
         if u > self.mx:
             u = self.mx
         elif u < self.mn:
             u = self.mn
-        ek_1 = ek
-        uk_1 = u
+        self.ek_1 = ek
+        
+        
         return u
 
     def listenTcp(self):
@@ -70,18 +72,18 @@ class PID:
                                      height=obj['scdim'][1] / 2 - 20)
         frameBotoes.place(x=1, y=1, width=obj['scdim'][0], height=40)
         pltY = self.putGraphics(frame_posicaoBola, obj['scdim'][0], obj['scdim'][1] / 2 - 20, 'Posição da Bola', 2,legend=['Posição da Bola', 'Posição alvo'],ylim=[-0.5,1.5])
-        pltVa = self.putGraphics(frame_saidaCompensador, obj['scdim'][0], obj['scdim'][1] / 2 - 20, 'Tensão do motor',ylim=[-1,150])
+        pltVa = self.putGraphics(frame_saidaCompensador, obj['scdim'][0], obj['scdim'][1] / 2 - 20, 'Tensão do motor',ylim=[-1,self.mx+1])
         obj['len'] = 10000
 
         def loop():
             t, y, v, goal = [0], [0], [0], [self.setPoint]
             while True:
-                if len(self.data) < 100:
-                   sleep(1)
+                if len(self.data) < 70:
+                   sleep(0.7)
                    continue
                 data = self.data[:]
                 del self.data[1:len(data)]
-                
+                data.pop(0)
                 y_ = [dt[0] for dt in data]
                 tensao_ = [dt[1] for dt in data]
                 y = y + y_
@@ -90,7 +92,7 @@ class PID:
                 goal = goal + list(np.array(y_) * 0 + self.setPoint)
                 if len(y) > obj['len']:
                     y = y[len(y) - obj['len']:]
-                    v = v[len(b) - obj['len']:]
+                    v = v[len(v) - obj['len']:]
                     t = t[len(t) - obj['len']:]
                     goal = goal[len(goal) - obj['len']:]
                 
