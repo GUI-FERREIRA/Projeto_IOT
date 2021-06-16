@@ -108,9 +108,9 @@ class PID:
         cv = FigureCanvasTkAgg(figure, frame)
         cv.get_tk_widget().place(x=0, y=0, width=x, height=y)
         if data == 1:
-            gp, = ax.plot([0], [0])
+            gp, = ax.stairs([0], [0])
         else:
-            gp, gp2 = ax.plot([0], [0], [0], [0])
+            gp, gp2 = ax.stairs([0], [0], [0], [0])
         ax.set_title(title)
         ax.set_ylim(*ylim)
         ax.grid()
