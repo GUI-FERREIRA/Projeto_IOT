@@ -16,18 +16,18 @@ class PID:
         self.setPoint = 0
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.bind((host, porta))
-
         self.data = []
         # tensao minima e maxima de saída
         self.mn, self.mx = 0.0, 300.0
         # variaveis para eq de difernecas
+        #self.e, self.u= [0]*3,[0]*3
         self.ek_1 = 0
         
     def eqdif(self, y):
         '''
         Recebe a posicao atual da bolinha
         :return: a tensão de entrada para o levitador
-        '''
+        '''  
         ek_1 = self.ek_1
         ek = self.setPoint - y
         u = self.kp * ek + self.ki * (ek + ek_1) + self.kd * (ek - ek_1)
@@ -35,9 +35,7 @@ class PID:
             u = self.mx
         elif u < self.mn:
             u = self.mn
-        self.ek_1 = ek
-        
-        
+        self.ek_1 = ek 
         return u
 
     def listenTcp(self):
@@ -65,14 +63,14 @@ class PID:
         frame_saidaCompensador = tk.Frame(root, bg='#00f')
         frameBotoes = tk.Frame(root)
 
-        root.title('Speed Control')
+        root.title('Controle de Posição')
         self.uiBotoes(frameBotoes, obj)
         frame_posicaoBola.place(x=1, y=35, width=obj['scdim'][0], height=obj['scdim'][1] / 2 - 20)
         frame_saidaCompensador.place(x=1, y=obj['scdim'][1] / 2 + 20, width=obj['scdim'][0],
                                      height=obj['scdim'][1] / 2 - 20)
         frameBotoes.place(x=1, y=1, width=obj['scdim'][0], height=40)
         pltY = self.putGraphics(frame_posicaoBola, obj['scdim'][0], obj['scdim'][1] / 2 - 20, 'Posição da Bola', 2,legend=['Posição da Bola', 'Posição alvo'],ylim=[-0.5,1.5])
-        pltVa = self.putGraphics(frame_saidaCompensador, obj['scdim'][0], obj['scdim'][1] / 2 - 20, 'Tensão do motor',ylim=[-1,self.mx+1])
+        pltVa = self.putGraphics(frame_saidaCompensador, obj['scdim'][0], obj['scdim'][1] / 2 - 20, 'Tensão do motor',ylim=[-1+self.mn,self.mx+1])
         obj['len'] = 10000
 
         def loop():
@@ -108,9 +106,9 @@ class PID:
         cv = FigureCanvasTkAgg(figure, frame)
         cv.get_tk_widget().place(x=0, y=0, width=x, height=y)
         if data == 1:
-            gp, = ax.stairs([0], [0])
+            gp, = ax.step([0], [0])
         else:
-            gp, gp2 = ax.stairs([0], [0], [0], [0])
+            gp, gp2 = ax.step([0], [0], [0], [0])
         ax.set_title(title)
         ax.set_ylim(*ylim)
         ax.grid()
@@ -137,6 +135,7 @@ class PID:
 
         def chose_event(event):
             valueStr.set('%.2f' % (value.get(),))
+            self.setPoint = value.get()
 
         tk.Label(frame, textvariable=valueStr).place(x=280, y=10, width=100)
         slider = ttk.Scale(frame, from_=0, to=1, orient='horizontal', command=chose_event, variable=value)
@@ -145,11 +144,10 @@ class PID:
         def send(event):
             self.setPoint = value.get()
             
-
-        slider.bind("<ButtonRelease-1>", send)
+        #slider.bind("<ButtonRelease-1>", send)
 
 if __name__ == '__main__':
-
     pid = PID()
     Thread(target=pid.listenTcp).start()
     pid.ui()
+        

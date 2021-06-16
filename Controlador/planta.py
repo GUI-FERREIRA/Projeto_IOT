@@ -31,7 +31,7 @@ class Levitador:
         self.B = Gs.B
         self.h = 1e-4
         self.uk = np.array([0])
-        self.xk = np.array([[1], [0], [0]])
+        self.xk = np.array([[0], [0], [0]])
 
         self.tensao = 0
         
@@ -70,6 +70,7 @@ class Levitador:
             if y>1:
                 self.xk[0] = 1
                 self.xk[1] = 0
+            
             self.setBall(y)
             t += self.h
             self.y.value = y
@@ -82,7 +83,6 @@ class Levitador:
             v = self.y.value
             self.socket.send(np.array(v, dtype=np.float64).tobytes())
             
-
 
     def listenTCP(self):
         while True:
@@ -118,10 +118,9 @@ class Levitador:
             canvas.create_text(277, y - 3, fill="darkblue", font="Times 8", text="%.1f m" % (dy,), anchor=tk.W)
         self.canvas = canvas
         details['ball'] = ball
-        self.details = details
-        
+       
+        self.details = details 
         root.mainloop()
-
 
     def setBall(self, y):
         if self.canvas is None:  # verifica se a ui ja foi iniciada
@@ -131,10 +130,10 @@ class Levitador:
         y = y - self.details['ylst']
         self.details['ylst'] = y + self.details['ylst']
         self.canvas.move(self.details['ball'], 0, y)
+        
 
 
 if __name__ == '__main__':
-
     l = Levitador(0.01)
     Thread(target=l.amostrador).start()
     Thread(target=l.listenTCP).start()
