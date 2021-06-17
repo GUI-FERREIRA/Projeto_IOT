@@ -13,16 +13,16 @@ class Levitador:
     def __init__(self, tempoAmostragemCompensador=0.01,host='localhost',port=8909):
         self.Ts = tempoAmostragemCompensador
         s = tf('s')
-        m = 0.150
-        g = 9.81
-        Ca = 0.5
-        rho = 1
-        r = 0.1
-        A = np.pi * r ** 2
+        m = 0.150 #massa
+        g = 9.81 #gravidade
+        Ca = 0.5 #arrasto
+        rho = 1 # densidade
+        r = 0.1 #raio
+        A = np.pi * r ** 2 #área
         alfa = 0.5 * Ca * rho * A / m
-        va_e = np.sqrt(g / alfa)
-        k_m = 0.5
-        tal = 0.01
+        va_e = np.sqrt(g / alfa) #velocidade do ar garantindo eq. Estático
+        k_m = 0.5 #cte proporcionalidade
+        tal = 0.01 # cte de tempo
         Gb = (2 * alfa * va_e) / (s ** 2)  # Ft do movimento da bolinha
         Gv = k_m / (tal * s + 1)  # Ft da ventoinha
         G = Gv * Gb
@@ -47,7 +47,7 @@ class Levitador:
         xkp1 = A @ x + B @ u
         return xkp1
 
-    def rk4(self, tk, xk, uk):
+    def rk4(self, tk, xk, uk): #runge-kutta ordem 4
         h = self.h
         xk = xk.reshape([3, 1])
         uk = uk.reshape([1, 1])
